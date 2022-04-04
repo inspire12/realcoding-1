@@ -1,5 +1,6 @@
 package ac.cnu.realcoding.controller;
 
+import org.springframework.data.relational.core.sql.In;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,11 +25,29 @@ public class UrlShortenerController {
         this.urlShortenerService = urlShortenerService;
     }
 
-    @GetMapping("health")
-    public Mono<String> healthCheck() {
-        // For basic tutorial
-        return Mono.just("Hello World");
+    private Mono<Integer> fib(int n) {
+        if (n == 0) {
+            return Mono.just(0);
+        }
+
+        if (n == 1 || n == 2) {
+            return Mono.just(1);
+        }
+        Mono<Integer> f0 = fib(n - 1);
+        Mono<Integer> f1 = fib(n - 2);
+        return Mono.zip(f0, f1, (n0, n1) -> n0 + n1);
     }
+
+    @GetMapping("health/{n}")
+    public Mono<String> healthCheck(@PathVariable int n) {
+        // For basic tutorial
+
+//        return fib(n).map(String::valueOf);
+        return fib(n).map(elem -> {
+            return String.valueOf(elem);
+        });
+    }
+
 
     @GetMapping("{encoded}")
     public Mono<ResponseEntity<Object>> unshorten(@PathVariable String encoded) {
@@ -38,14 +57,14 @@ public class UrlShortenerController {
         return urlShortenerService
                 .unshortenUrl(encoded)
                 .map(uri -> ResponseEntity.status(HttpStatus.FOUND)
-                                          .location(uri)
-                                          .build())
+                        .location(uri)
+                        .build())
                 .defaultIfEmpty(ResponseEntity.status(HttpStatus.NOT_FOUND).build());
     }
 
     @PostMapping("shorten")
     public Mono<ResponseEntity<UrlShortenerResponse>> createUrlShortener(@RequestBody UrlShortenerRequest urlShortenerRequest) {
         return urlShortenerService.shortenUrl(urlShortenerRequest)
-                                  .map(ResponseEntity::ok);
+                .map(ResponseEntity::ok);
     }
 }
