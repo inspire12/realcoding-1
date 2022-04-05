@@ -1,5 +1,8 @@
 package ac.cnu.realcoding.controller;
 
+import ac.cnu.realcoding.encoding.Base62Processor;
+import ac.cnu.realcoding.repository.URLInformation;
+import ac.cnu.realcoding.repository.URLRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import ac.cnu.realcoding.models.UrlShortenerRequest;
 import ac.cnu.realcoding.models.UrlShortenerResponse;
 import ac.cnu.realcoding.service.UrlShortenerService;
+import org.springframework.web.util.UriComponentsBuilder;
 import reactor.core.publisher.Mono;
 
 @RestController
@@ -61,4 +65,6 @@ public class UrlShortenerController {
         return urlShortenerService.shortenUrl(urlShortenerRequest)
                                   .map(ResponseEntity::ok);
     }
+
+
 }
