@@ -6,11 +6,25 @@ public class Base62Processor {
 
     public static String encode(long number) {
         // TODO: Implement Base62 Encoding Algorithm.
-        return "";
+        StringBuilder sb = new StringBuilder();
+        do {
+
+            sb.append(CODEC.charAt((int) (number % BASE)));
+            number /= BASE;
+
+        } while (number > 0);
+
+        return sb.reverse().toString();
     }
 
     public static long decode(String encoded) {
         // TODO: Implement Base62 Decoding Algorithm.
-        return 0;
+        long result = 0;
+        for (char ch : encoded.toCharArray()) {
+            result *= BASE;
+            result += CODEC.indexOf(ch);
+        }
+
+        return result;
     }
 }
