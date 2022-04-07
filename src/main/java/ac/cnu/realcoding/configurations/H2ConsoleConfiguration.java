@@ -12,7 +12,6 @@ import org.springframework.context.event.EventListener;
 import java.sql.SQLException;
 
 @Slf4j
-@Profile("local")
 @Configuration
 public class H2ConsoleConfiguration {
     private Server webServer;
@@ -23,7 +22,7 @@ public class H2ConsoleConfiguration {
     @EventListener(ContextRefreshedEvent.class)
     public void start() throws SQLException {
         log.info("starting h2 console at port {}", h2ConsolePort);
-        this.webServer = Server.createWebServer("-webPort", h2ConsolePort.toString());
+        this.webServer = Server.createWebServer("-webPort", h2ConsolePort.toString(), "-webAllowOthers");
         this.webServer.start();
     }
 
